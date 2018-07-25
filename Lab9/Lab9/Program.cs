@@ -23,6 +23,7 @@ namespace Lab9
                 {
                     classmates = AddClassmate(classmates);
                 }
+                Console.WriteLine("Would you like to continue? (y/n):");
             } while (IsRepeating());
             Console.WriteLine("Goodbye!");
             Console.ReadKey();
@@ -30,16 +31,40 @@ namespace Lab9
 
         static List<List<string>> AddClassmate(List<List<string>> classmates)
         {
-            Console.WriteLine("This will add a classmate to the list.");
-            Console.WriteLine("Would you like to continue? (y/n):");
+            string firstName = "default", lastName = "default", hometown = "default", food = "default", color = "default";
+            Console.WriteLine("Please enter the following information about the student.");
+            firstName = GetValidInput("First name: ", @"^[A-Z][a-zA-Z]*$", "start with a capital letter and consist only of letters.");
+            lastName = GetValidInput("Last name: ", @"^[A-Z][a-zA-Z\s]*$", "start with a capital letter and consist of only letters and spaces.");
+            hometown = GetValidInput("Hometown: ", @"^[A-Z][a-zA-Z\s]*,\s[A-Z][a-zA-Z\s]$", "contain a town and state/country, both of which start with a capital letter and consist of only letters and spaces, and are separated by a comma and a space.");
+            food = GetValidInput("Favorite Food: ", @"^[A-Z][a-zA-Z\s]*$", "start with a capital letter and consist of only letters and spaces.");
+            color = GetValidInput("Favorite Color: ", @"^[A-Z][a-zA-Z\s]*$", "start with a capital letter and consist of only letters and spaces.");
+
+            classmates.Add(new List<string> { firstName, lastName, hometown, food, color });
+
             return classmates;
+        }
+
+        static string GetValidInput(string prompt, string expression, string description)
+        {
+            do
+            {
+                Console.Write(prompt);
+                string input = Console.ReadLine();
+                if (Regex.IsMatch(input, expression))
+                {
+                    return input.Trim();
+                }
+                else
+                {
+                    Console.WriteLine($"Invalid input. Must {description}");
+                }
+            } while (true);
         }
 
         static void ViewInformation(List<List<string>> classmates)
         {
             List<string> classmate = GetValidClassmate(classmates);
             PrintInfo(classmate);
-            Console.Write("Would you like to learn about another student? (enter \"y\" or \"n\"): ");
         }
 
         static string GetValidMenuOption()
@@ -69,7 +94,7 @@ namespace Lab9
             }
             catch (FormatException)
             {
-                Console.WriteLine("Not a valid index. Must be an integer 1-20.");
+                Console.WriteLine($"Not a valid index. Must be an integer 1-{classmates.Count}.");
                 index = GetValidIndex(classmates);
             }
             return index;
@@ -86,7 +111,7 @@ namespace Lab9
             }
             catch (ArgumentOutOfRangeException)
             {
-                Console.WriteLine("Not a valid index. Must be an integer 1-20.");
+                Console.WriteLine($"Not a valid index. Must be an integer 1-{classmates.Count}.");
                 classmate = GetValidClassmate(classmates);
             }
             Console.Write($"Student {index + 1} is {classmate[FIRSTNAME]} {classmate[LASTNAME]}. ");
@@ -97,8 +122,8 @@ namespace Lab9
         {
             while (true)
             {
-                const int FIRSTNAME = 0, LASTNAME = 1, HOMETOWN = 2, FAVORITEFOOD = 3;
-                Console.Write($"What would you like to know about {classmate[FIRSTNAME]} {classmate[LASTNAME]}? (enter \"hometown\" or \"favorite food\"): ");
+                const int FIRSTNAME = 0, LASTNAME = 1, HOMETOWN = 2, FAVORITEFOOD = 3, FAVORITECOLOR = 4;
+                Console.Write($"What would you like to know about {classmate[FIRSTNAME]} {classmate[LASTNAME]}? (enter \"hometown\", \"favorite food\" or \"favorite color\"): ");
                 String input = Console.ReadLine().ToLower();
                 if (input == "hometown")
                 {
@@ -108,12 +133,16 @@ namespace Lab9
                 {
                     Console.Write($"{classmate[FIRSTNAME]} likes to eat {classmate[FAVORITEFOOD]}. ");
                 }
+                else if (input == "favorite color")
+                {
+                    Console.WriteLine($"{classmate[FIRSTNAME]} loves the color {classmate[FAVORITECOLOR]}");
+                }
                 else
                 {
                     Console.WriteLine("That data does not exist. Please try again.");
                     continue;
                 }
-                Console.Write("Would you like to know more? (enter \"y\" or \"n\"): ");
+                Console.Write($"Would you like to know more about {classmate[FIRSTNAME]}? (enter \"y\" or \"n\"): ");
                 bool repeat = IsRepeating();
                 if (repeat)
                 {
