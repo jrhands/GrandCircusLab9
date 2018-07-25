@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Lab9
@@ -8,21 +9,58 @@ namespace Lab9
 
         static void Main(string[] args)
         {
-            String[][] classmates = LoadData();
+            List<List<string>> classmates = LoadData();
             Console.Write("Welcome to our C# class. ");
             do
             {
-                String[] classmate = GetValidClassmate(classmates);
-                PrintInfo(classmate);
-                Console.Write("Would you like to learn about another student? (enter \"y\" or \"n\"): ");
+                Console.WriteLine("Would you like to (view) student information or (add) a student to the database?");
+                string input = GetValidMenuOption();
+                if (input == "view")
+                {
+                    ViewInformation(classmates);
+                }
+                else if (input == "add")
+                {
+                    classmates = AddClassmate(classmates);
+                }
             } while (IsRepeating());
             Console.WriteLine("Goodbye!");
             Console.ReadKey();
         }
 
-        static int GetValidIndex()
+        static List<List<string>> AddClassmate(List<List<string>> classmates)
         {
-            Console.Write("Which student would you like to learn more about? (enter a number 1-20): ");
+            Console.WriteLine("This will add a classmate to the list.");
+            Console.WriteLine("Would you like to continue? (y/n):");
+            return classmates;
+        }
+
+        static void ViewInformation(List<List<string>> classmates)
+        {
+            List<string> classmate = GetValidClassmate(classmates);
+            PrintInfo(classmate);
+            Console.Write("Would you like to learn about another student? (enter \"y\" or \"n\"): ");
+        }
+
+        static string GetValidMenuOption()
+        {
+            while (true)
+            {
+                string input = Console.ReadLine().ToLower();
+                if (Regex.IsMatch(input, "view|add"))
+                {
+                    return input;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid input. Please enter \"view\" or \"add\".");
+                }
+            }
+        }
+
+        static int GetValidIndex(List<List<string>> classmates)
+        {
+            Console.Write($"Which student would you like to learn more about? (enter a number 1-{classmates.Count}): ");
             String input = Console.ReadLine();
             int index;
             try
@@ -32,21 +70,21 @@ namespace Lab9
             catch (FormatException)
             {
                 Console.WriteLine("Not a valid index. Must be an integer 1-20.");
-                index = GetValidIndex();
+                index = GetValidIndex(classmates);
             }
             return index;
         }
 
-        static String[] GetValidClassmate(String[][] classmates)
+        static List<string> GetValidClassmate(List<List<string>> classmates)
         {
             const int FIRSTNAME = 0, LASTNAME = 1;
-            int index = GetValidIndex() - 1;
-            String[] classmate;
+            int index = GetValidIndex(classmates) - 1;
+            List<string> classmate;
             try
             {
                 classmate = classmates[index];
             }
-            catch (IndexOutOfRangeException)
+            catch (ArgumentOutOfRangeException)
             {
                 Console.WriteLine("Not a valid index. Must be an integer 1-20.");
                 classmate = GetValidClassmate(classmates);
@@ -55,7 +93,7 @@ namespace Lab9
             return classmate;
         }
 
-        static void PrintInfo(String[] classmate)
+        static void PrintInfo(List<string> classmate)
         {
             while (true)
             {
@@ -75,7 +113,7 @@ namespace Lab9
                     Console.WriteLine("That data does not exist. Please try again.");
                     continue;
                 }
-                Console.Write("Would you like to know more? (enter \"yes\" or \"no\"): ");
+                Console.Write("Would you like to know more? (enter \"y\" or \"n\"): ");
                 bool repeat = IsRepeating();
                 if (repeat)
                 {
@@ -106,51 +144,31 @@ namespace Lab9
             }
         }
 
-        static String[][] LoadData()
+        static List<List<string>> LoadData()
         {
-            String[] fabricia = { "Fabricia", "Gensch", "Riverside, CA", "BBQ Ribs" };
-            String[] cintia = { "Cintia", "Buachalla", "Anchorage, AK", "Chocolate Ice Cream" };
-            String[] elvira = { "Elvira", "Auteberry", "Tuscon, AZ", "Blueberries" };
-            String[] graciana = { "Graciana", "Koning", "Tampa, FL", "Steak" };
-            String[] gaetan = { "Gaetan", "Dickinson", "Anchorage, AK", "Roast Beef" };
-            String[] cian = { "Cian", "Weaver", "Tampa, FL", "Bratwurst" };
-            String[] gerolt = { "Gerolt", "Milburn", "Tuscon, AZ", "Eggs Benedict" };
-            String[] perlita = { "Perlita", "MacFarlane", "Tampa, FL", "Sweet & Sour Chicken" };
-            String[] elise = { "Elise", "Hogarth", "Riverside, CA", "Strawberry Pie" };
-            String[] trina = { "Trina", "Moller", "Indianapolis, IN", "Duck" };
-            String[] malini = { "Malini", "Carter", "Dallas, TX", "Caramel Apples" };
-            String[] anna = { "Anna", "Vaccaro", "Riverside, CA", "Mashed Potatoes" };
-            String[] aina = { "Aina", "Hoggard", "Indianapolis, IN", "Spring Rolls" };
-            String[] fae = { "Fae", "Hanraets", "Dallas, TX", "Chicken" };
-            String[] edita = { "Edita", "Cuellar", "Anchorage, AK", "Mac & Cheese" };
-            String[] thyge = { "Thyge", "Barnet", "Tuscon, AZ", "Corn" };
-            String[] kapono = { "Kapono", "Forestier", "Tuscon, AZ", "Baked Beans" };
-            String[] kiley = { "Kiley", "Haight", "Tuscon, AZ", "Turkey" };
-            String[] lila = { "Lila", "Rothbauer", "Riverside, CA", "Apples" };
-            String[] clair = { "Clair", "Alberghini", "Indianapolis, IN", "Tacos" };
-            String[][] classmates = new String[20][];
-            classmates[0] = fabricia;
-            classmates[1] = cintia;
-            classmates[2] = elvira;
-            classmates[3] = graciana;
-            classmates[4] = gaetan;
-            classmates[5] = cian;
-            classmates[6] = gerolt;
-            classmates[7] = perlita;
-            classmates[8] = elise;
-            classmates[9] = trina;
-            classmates[10] = malini;
-            classmates[11] = anna;
-            classmates[12] = aina;
-            classmates[13] = fae;
-            classmates[14] = edita;
-            classmates[15] = thyge;
-            classmates[16] = kapono;
-            classmates[17] = kiley;
-            classmates[18] = lila;
-            classmates[19] = clair;
-            return classmates;
+            return new List<List<string>>
+            {
+                new List<string> { "Fabricia", "Gensch", "Riverside, CA", "BBQ Ribs", "Red" },
+                new List<string> { "Cintia", "Buachalla", "Anchorage, AK", "Chocolate Ice Cream", "Orange" },
+                new List<string> { "Elvira", "Auteberry", "Tuscon, AZ", "Blueberries", "Yellow" },
+                new List<string> { "Graciana", "Koning", "Tampa, FL", "Steak", "Green" },
+                new List<string> { "Gaetan", "Dickinson", "Anchorage, AK", "Roast Beef", "Blue" },
+                new List<string> { "Cian", "Weaver", "Tampa, FL", "Bratwurst", "Indigo" },
+                new List<string> { "Gerolt", "Milburn", "Tuscon, AZ", "Eggs Benedict", "Purple" },
+                new List<string> { "Perlita", "MacFarlane", "Tampa, FL", "Sweet & Sour Chicken", "Black" },
+                new List<string> { "Elise", "Hogarth", "Riverside, CA", "Strawberry Pie", "White" },
+                new List<string> { "Trina", "Moller", "Indianapolis, IN", "Duck", "Grey" },
+                new List<string> { "Malini", "Carter", "Dallas, TX", "Caramel Apples", "Gray" },
+                new List<string> { "Anna", "Vaccaro", "Riverside, CA", "Mashed Potatoes", "Gold" },
+                new List<string> { "Aina", "Hoggard", "Indianapolis, IN", "Spring Rolls", "Silver" },
+                new List<string> { "Fae", "Hanraets", "Dallas, TX", "Chicken", "Cyan" },
+                new List<string> { "Edita", "Cuellar", "Anchorage, AK", "Mac & Cheese", "Magenta" },
+                new List<string> { "Thyge", "Barnet", "Tuscon, AZ", "Corn", "Brown" },
+                new List<string> { "Kapono", "Forestier", "Tuscon, AZ", "Baked Beans", "Scarlet" },
+                new List<string> { "Kiley", "Haight", "Tuscon, AZ", "Turkey", "Dark Blue" },
+                new List<string> { "Lila", "Rothbauer", "Riverside, CA", "Apples", "Pink" },
+                new List<string> { "Clair", "Alberghini", "Indianapolis, IN", "Tacos", "Dark Green" }
+            };
         }
-
     }
 }
