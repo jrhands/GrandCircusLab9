@@ -9,10 +9,16 @@ namespace Lab9
 
         static void Main(string[] args)
         {
-            List<List<string>> classmates = LoadData();
+            //Loads all of my pre-made data into the List
+            List<List<string>> classmates = GetDefaultData();
+
+            //Welcome message
             Console.Write("Welcome to our C# class. ");
+
+            //This do/while loop controls the majority of the flow of the program
             do
             {
+                //Main menu
                 Console.WriteLine("Would you like to (view) student information or (add) a student to the database?");
                 string input = GetValidMenuOption();
                 if (input == "view")
@@ -23,15 +29,23 @@ namespace Lab9
                 {
                     classmates = AddClassmate(classmates);
                 }
+
+                //Ask to return to main menu or quit program
                 Console.WriteLine("Would you like to continue? (y/n):");
             } while (IsRepeating());
+
+            //Exit message
             Console.WriteLine("Goodbye!");
             Console.ReadKey();
         }
 
+        //Takes in the current list of classmates, returns that list with the new student added
         static List<List<string>> AddClassmate(List<List<string>> classmates)
         {
+            //Variables used to create new student, with default values
             string firstName = "default", lastName = "default", hometown = "default", food = "default", color = "default";
+
+            //Main input of information for new student
             Console.WriteLine("Please enter the following information about the student.");
             firstName = GetValidInput("First name: ", @"^[A-Z][a-zA-Z]*$", "start with a capital letter and consist only of letters.");
             lastName = GetValidInput("Last name: ", @"^[A-Z][a-zA-Z\s]*$", "start with a capital letter and consist of only letters and spaces.");
@@ -39,11 +53,14 @@ namespace Lab9
             food = GetValidInput("Favorite Food: ", @"^[A-Z][a-zA-Z\s]*$", "start with a capital letter and consist of only letters and spaces.");
             color = GetValidInput("Favorite Color: ", @"^[A-Z][a-zA-Z\s]*$", "start with a capital letter and consist of only letters and spaces.");
 
+            //Adds the new student to the list of classmates
             classmates.Add(new List<string> { firstName, lastName, hometown, food, color });
 
+            //Return modified list
             return classmates;
         }
 
+        //General method for prompting the user for a string and verifying it against a given regular expression
         static string GetValidInput(string prompt, string expression, string description)
         {
             do
@@ -61,12 +78,14 @@ namespace Lab9
             } while (true);
         }
 
+        //Controls selecting a classmate and opening a menu to view their information
         static void ViewInformation(List<List<string>> classmates)
         {
             List<string> classmate = GetValidClassmate(classmates);
             PrintInfo(classmate);
         }
 
+        //Gets, validates, and returns user input for the main menu.
         static string GetValidMenuOption()
         {
             while (true)
@@ -83,6 +102,7 @@ namespace Lab9
             }
         }
 
+        //Prompts the user for an index, verifies that their input is a valid integer, then returns it
         static int GetValidIndex(List<List<string>> classmates)
         {
             Console.Write($"Which student would you like to learn more about? (enter a number 1-{classmates.Count}): ");
@@ -100,6 +120,8 @@ namespace Lab9
             return index;
         }
 
+        //Verifies that a user-input integer is a valid index for the list of classmates, prints their first and last name,
+        //then returns that classmate
         static List<string> GetValidClassmate(List<List<string>> classmates)
         {
             const int FIRSTNAME = 0, LASTNAME = 1;
@@ -118,11 +140,14 @@ namespace Lab9
             return classmate;
         }
 
+        //Takes a classmate and controls the menu for viewing their data
         static void PrintInfo(List<string> classmate)
         {
             while (true)
             {
                 const int FIRSTNAME = 0, LASTNAME = 1, HOMETOWN = 2, FAVORITEFOOD = 3, FAVORITECOLOR = 4;
+
+                //View menu
                 Console.Write($"What would you like to know about {classmate[FIRSTNAME]} {classmate[LASTNAME]}? (enter \"hometown\", \"favorite food\" or \"favorite color\"): ");
                 String input = Console.ReadLine().ToLower();
                 if (input == "hometown")
@@ -142,9 +167,10 @@ namespace Lab9
                     Console.WriteLine("That data does not exist. Please try again.");
                     continue;
                 }
+
+                //Asks user to either view more info about the student or return to the main menu
                 Console.Write($"Would you like to know more about {classmate[FIRSTNAME]}? (enter \"y\" or \"n\"): ");
-                bool repeat = IsRepeating();
-                if (repeat)
+                if (IsRepeating())
                 {
                     continue;
                 }
@@ -155,6 +181,7 @@ namespace Lab9
             }
         }
 
+        //Takes user input and returns true for y or yes, false for n or no. Used to control various menu loops.
         static bool IsRepeating()
         {
             String input = Console.ReadLine().ToLower();
@@ -173,7 +200,8 @@ namespace Lab9
             }
         }
 
-        static List<List<string>> LoadData()
+        //Returns a set of default data for the program.
+        static List<List<string>> GetDefaultData()
         {
             return new List<List<string>>
             {
